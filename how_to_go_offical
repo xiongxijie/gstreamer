@@ -1,0 +1,17 @@
+pal@pal-desktop79:~/Music/gstreamer-online$ git describe --tags
+1.24.0-1444-g43c9c3a020
+
+
+the commit hash of offical gstreamer is 43c9c3a020
+
+
+so clone from official "https://gitlab.freedesktop.org/gstreamer/gstreamer.git"
+and enter the repo dir
+
+git checkout <commit hash>
+
+here it is :
+git checkout 43c9c3a020,
+so we can get the offical 
+
+this is repo is based on it, add some personal code for personal use
