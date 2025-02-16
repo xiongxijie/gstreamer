@@ -1,0 +1,4 @@
+Use gst_element_query_convert(): 
+This function can be used to convert between two 
+different formats, such as time and bytes. 
+It queries an element to perform the conversion.

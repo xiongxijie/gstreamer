@@ -1,0 +1,79 @@
+meson setup --prefix=/media/pal/E/FreeDsktop/gstreamer/install builddir
+meson compile -C builddir
+meson install -C builddir
+
+
+
+
+
+
+
+
+
+----Test command, in install dir /bin:
+
+export LD_LIBRARY_PATH=/media/pal/E/FreeDsktop/gstreamer/install/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/media/pal/E/FreeDsktop/gstreamer/install/lib/x86_64-linux-gnu/gstreamer-1.0:$LD_LIBRARY_PATH
+
+gst-launch-1.0 filesrc location=~/Downloads/Yellowstone_s3_Trailer.mp4 ! qtdemux name=demux demux.video_0 ! queue ! decodebin ! videoconvert ! autovideosink demux.audio_0 ! queue ! decodebin ! audioconvert ! autoaudiosink
+
+
+
+
+
+
+----Test command, use gst-bt/btdemux plugin
+
+export LD_LIBRARY_PATH=/media/pal/E/FreeDsktop/gstreamer/install/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/media/pal/E/FreeDsktop/gstreamer/install/lib/x86_64-linux-gnu/gstreamer-1.0:$LD_LIBRARY_PATH
+
+
+export GST_PLUGIN_PATH=/media/pal/E/FreeDsktop/gst-bt/install/lib/gstreamer-1.0:$GST_PLUGIN_PATH
+
+export LD_LIBRARY_PATH=/media/pal/E/FreeDsktop/gst-bt/install/lib/gstreamer-1.0:$LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/media/pal/E/Documents/libtorrent-RC_2_0/install/lib:$LD_LIBRARY_PATH
+
+--incomplete mp4, many pieces has not downloaded (but got ftyp,moov)
+gdb --args  
+gst-launch-1.0  filesrc location=/media/pal/E/FreeDsktop/gst-bt/install/lib/gstreamer-1.0/hhd800.com@AIAV-013.mp4.torrent ! btdemux temp-location=/home/pal/Downloads/AIAV-013 ! decodebin name=dec ! queue ! autovideosink dec. ! queue ! audioconvert ! autoaudiosink
+
+-- complete mp4 (all pieces is available)
+gdb --args  
+gst-launch-1.0  filesrc location=/media/pal/E/FreeDsktop/gst-bt/install/lib/gstreamer-1.0/ForBiggerBlazes.mp4.torrent ! btdemux temp-location=/home/pal/Downloads ! decodebin name=dec ! queue ! autovideosink dec. ! queue ! audioconvert ! autoaudiosink
+
+
+
+
+
+
+----qtdemux.cc footprints
+
+loop_state_header it say : "got moov, done with headers in loop_state_header"
+prepare_streams
+    add_fragmented_samples
+
+qt_demux_parse_moof No.1
+
+loop{
+   
+    loop_stete_movie    
+            prepare_current_sample (if "out of sample", add_fagmented_samples)
+                    parse_samples
+            advance_sample
+                    parse_samples
+}
+
+qt_demux_parse_moof No.2 ~ larger
+
+
+in parse_samples(), it said "parsed all available samples"
+and loop {
+          
+        loop_state_movie  
+                prepare_current_sample (if "out of sample", add_fagmented_samples)
+                        parse_samples
+                advance_sample
+                        parse_samples
+
+}
